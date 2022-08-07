@@ -16,15 +16,15 @@ void init() {
 }
 
 void solve() {
-    dp[numOfStair] = stair[numOfStair];
-    dp[numOfStair-1] = stair[numOfStair] + stair[numOfStair-1];
-    for(int i = numOfStair-2; i >= 1; i--) {
-        dp[i] = max({ (dp[i+3] + stair[i+1] + stair[i]), (dp[i+2] + stair[i]), (dp[i+1]) });
+    dp[1] = stair[1];
+    dp[2] = stair[1] + stair[2];
+    for(int i = 1; i <= numOfStair; i++) {
+        dp[i] = max( (dp[i-3] + stair[i-1] + stair[i]), (dp[i-2] + stair[i]) );
     }
-    // XOO
-    // OXO
-    // OOX
-    cout << dp[1] << endl;
+    // XOO dp[i-3] + stair[i-1] + stair[i]
+    // OXO dp[i-2] + stair[i]
+    // OOX 마지막 계단 밟아야하므로 고려 X
+    cout << dp[numOfStair] << endl;
 }
 
 int main() {
