@@ -23,7 +23,7 @@ void solve() {
     }
     // XOO dp[i-3] + stair[i-1] + stair[i]
     // OXO dp[i-2] + stair[i]
-    // OOX 마지막 계단 밟아야하므로 고려 X
+    // OOX 마지막 계단 밟아야하므로 고려 안함
     cout << dp[numOfStair] << endl;
 }
 
