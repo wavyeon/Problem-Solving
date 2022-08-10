@@ -21,17 +21,25 @@ void findMaxConnectedSum() {
     for(int i = 1; i < n; i++) {
         originalDP[i] = max(arr[i], originalDP[i-1] + arr[i]);
     }
+    // for(int i = 0; i < n; i++) {
+    //     cout << originalDP[i] << " ";
+    // }
+    // cout << endl;
 }
 void findMaxConnectedSumWithPass() {
     passedDP[0] = arr[0];
     passedDP[1] = arr[1];
     for(int i = 1; i < n; i++) {
-        passedDP[i] = max(originalDP[i-2], passedDP[i-1]) + arr[i];
+        passedDP[i] = max( originalDP[i-2] + arr[i], passedDP[i-1] + arr[i] );
     }
+    // for(int i = 0; i < n; i++) {
+    //     cout << passedDP[i] << " ";
+    // }
+    // cout << endl;
 }
 
 void findMaxSum() {
-    int output = 0;
+    int output = -2147483648;
     for(int i = 0; i < n; i++) {
         if(originalDP[i] > output) {
             output = originalDP[i];
