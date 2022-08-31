@@ -1,59 +1,78 @@
+//BFS 말고 Dijkstra
+//Dijkstra는 Priority Queue 이용!
 #include <iostream>
 #include <queue>
-#define MAX_VALUE 100001
-#define isVisited 1
+#include <algorithm>
+#define visited 1
 #define notVisited 0
+#define MAX_VALUE 100001
 
 using namespace std;
 
+int MAX = 100001;
+int from, to;
+
+// pair 안에는 구조체 사용이 불가능하다!!
 typedef struct {
     int time;
-    int distance;
-} location;
+    int location;
+} route;
 
-queue<location> q;
-int visited[MAX_VALUE];
+priority_queue<pair<int,pair<int, int>>> pq;
+int isVisited[MAX_VALUE];
 
-void bfs(int to) {
-    while(!q.empty()) {
-        location cur = q.front();
-        q.pop();
-        if(cur.distance == to) {
-            cout << cur.time << endl;
-            break;
+void init() {
+    scanf("%d %d", &from, &to);
+}
+
+void bfs() {
+    while(!pq.empty()) {
+        cout <<"시발" <<endl;
+        route cur;
+        cur.time = pq.top().second.first;
+        cur.location = pq.top().second.second;
+        pq.pop();
+        cout << cur.time << " " << cout.location << endl;
+        if(cur.location == to) {
+            
+            printf("%d\n", cur.time);
         }
-        location next;
-        if(cur.distance - 1 >= 0 && visited[cur.distance - 1] == notVisited) {
-            visited[cur.distance - 1] = isVisited;
-            next.distance = cur.distance - 1; 
-            next.time = cur.time + 1;
-            q.push(next);
+        else {
+            route next;
+            if(cur.location-1 >= 0 && isVisited[cur.location-1] == notVisited) {
+                isVisited[cur.location-1] = visited;
+                next.location = cur.location-1;
+                next.time = cur.time+1;
+                pq.push(make_pair(1,make_pair(next.time, next.location)));
+            }
+            if(cur.location < from) {
+                if(cur.location+1 < MAX && isVisited[cur.location+1] == notVisited) {
+                    isVisited[cur.location+1] = visited;
+                    next.location = cur.location+1;
+                    next.time = cur.time+1;
+                    pq.push(make_pair(1,make_pair(next.time, next.location)));
+                }
+                if(cur.location*2 < MAX && isVisited[cur.location*2] == notVisited) {
+                    isVisited[cur.location*2] = visited;
+                    next.location = cur.location*2;
+                    next.time = cur.time;
+                    pq.push(make_pair(0,make_pair(next.time, next.location)));
+                }
+            }
         }
-        if(cur.distance + 1 < MAX_VALUE && visited[cur.distance + 1] == notVisited) {
-            visited[cur.distance + 1] = isVisited;
-            next.distance = cur.distance + 1;
-            next.time = cur.time + 1;
-            q.push(next);
-        }
-        if(cur.distance * 2 < MAX_VALUE&& visited[cur.distance * 2] == notVisited) {
-            visited[cur.distance * 2] = isVisited;
-            next.distance = cur.distance * 2;
-            next.time = cur.time;
-            q.push(next);
-        }    
     }
 }
-void solve(int from, int to) {
-    location start;
+
+void solve() {
+    route start;
     start.time = 0;
-    start.distance = from;
-    visited[start.distance] = isVisited;
-    q.push(start);
-    bfs(to);
+    start.location = from;
+    isVisited[start.location] = visited;
+    pq.push(make_pair(0, make_pair(start.time, start.location)));
+    bfs();
 }
 
 int main() {
-    int from, to;
-    cin >> from >> to;
-    solve(from, to);
+    init();
+    solve();
 }
