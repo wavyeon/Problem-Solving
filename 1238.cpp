@@ -1,94 +1,92 @@
 #include <iostream>
-#include <vector>
 #include <queue>
+#include <algorithm>
+#include <string.h>
 
 using namespace std;
 
 const int MAX = 1001;
+const int INF = 100001;
 int student, road, party;
-int timeRecord[MAX];
-int originalGraph[MAX][MAX];
-int tmpGraph[MAX][MAX];
-int goTime[MAX];
-int backTime[MAX];
-int roundTime[MAX];
-bool isVisited[MAX];
-priority_queue<  pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>> > q;
+int dist[MAX];
+int graph[MAX][MAX];
+int toParty[MAX];
+int fromParty[MAX];
+int roundDistance[MAX];
+priority_queue< pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>> > pq;
 
 void input() {
-    fill(&originalGraph[0][0], &originalGraph[MAX][MAX], 100001);
-    for(int i = 0; i < MAX; i++) {
-        originalGraph[i][i] = 0;
+    fill(&graph[0][0], &graph[MAX][MAX], INF);
+    for(int i = 1; i < MAX; i++) {
+        graph[i][i] = 0;
     }
     scanf("%d %d %d", &student, &road, &party);
-    int from, to, tmpTime;
+    int from, to, dist;
     for(int i = 0; i < road; i++) {
-        scanf("%d %d %d", &from, &to, &tmpTime);
-        originalGraph[from][to] = tmpTime;
+        scanf("%d %d %d", &from, &to, &dist);
+        graph[from][to] = dist;
     }
 }
 
-void init(int idx) {
-    fill(&isVisited[0], &isVisited[MAX], false);
-    for(int i = 1; i <= student; i++) {
-        timeRecord[i] = originalGraph[idx][i];
+void init() {
+    for(int i = 0; i < MAX; i++) {
+        dist[i] = INF;
     }
+    // memset(dist, INF, sizeof(int)*MAX);
+    // fill(&distance[0], &distance[MAX], INF);
 }
 
-void bfs(int idx) {
-    // cout << idx << "시작 ------------------------------------------" << endl;
-    q.push(make_pair(idx, 0));
-    isVisited[idx] = true;
-    while(!q.empty()) {
-        int curIdx = q.top().first;
-        int curTime = q.top().second;
-        q.pop();
-        // cout << "현재 방문: " << curIdx << endl;
-        int nextIdx = 0;
-        int tmpMax = 100001;
-        for(int i = 1; i <= student; i++) {
-            if(originalGraph[curIdx][i] + curTime < timeRecord[i] ) {
-                timeRecord[i] = originalGraph[curIdx][i] + curTime;
-            }
-            if(!isVisited[i] && originalGraph[curIdx][i] > 0 && originalGraph[curIdx][i] < 100001) {
-                if(timeRecord[i] < tmpMax) {
-                    tmpMax = timeRecord[i];
-                    nextIdx = i;
-                }
-            }
-        }
-        if(nextIdx != 0) {
-            // cout << nextIdx << "를 push" << endl;
-            q.push(make_pair(nextIdx, curTime + originalGraph[curIdx][nextIdx]));
-            isVisited[nextIdx] = true;
-        }
-        // for(int i = 1; i <= student; i++) {
-        //     cout << timeRecord[i] << " ";
+void dijkstra(int idx) {
+    pq.push(make_pair(0, idx));
+    int curIdx, curTime;
+    while(!pq.empty()) {
+        curIdx = pq.top().second;
+        curTime = pq.top().first;
+        // cout << "팝: " << curIdx << " " << curTime << endl;
+        pq.pop();
+        // if(curTime > dist[curIdx]) {
+        //     cout << curTime << " " << dist[curIdx] << endl;
+        //     continue;
         // }
-        // cout << endl;
+        // 이미 방문한 적이 있고 방문할 이유가 더이상 없는 경우 continue?
+        for(int i = 1; i <= student; i++) {
+            if(dist[i] > curTime + graph[curIdx][i]) {
+                // cout << i << "방문" << endl;
+                dist[i] = curTime + graph[curIdx][i];
+                pq.push(make_pair(dist[i], i));
+            }
+        } 
     }
 }
 
 void solve() {
     for(int i = 1; i <= student; i++) {
-        init(i);
-        bfs(i);
-        goTime[i] = timeRecord[party];
+        init();
+        dijkstra(i);
+        // cout << i << "탐색" << endl;
+        // for(int i = 1; i <= student; i++) {
+        //     cout << dist[i] << " ";
+        // }
+        // cout << endl;
+        toParty[i] = dist[party];
         if(i == party) {
             for(int j = 1; j <= student; j++) {
-                backTime[j] = timeRecord[j];
+                fromParty[j] = dist[j];
             }
         }
     }
+    // for(int i = 1; i <= student; i++) {
+    //     roundDistance[i] = toParty[i] + fromParty[i];
+    // }
+    // cout << max_element(begin(roundDistance, end(roundDistance))) << endl;
     int output = 0;
     for(int i = 1; i <= student; i++) {
-        roundTime[i] = goTime[i] + backTime[i];
-        if(roundTime[i] > output) {
-            output = roundTime[i];
+        roundDistance[i] = toParty[i] + fromParty[i];
+        // cout << toParty[i] << " " << fromParty[i] << endl;
+        if(roundDistance[i] > output) {
+            output = roundDistance[i];
         }
-        // cout << i << "왕복: " << roundTime[i] << " ";
     }
-    // cout << endl;
     cout << output << endl;
 }
 
