@@ -6,7 +6,7 @@
 using namespace std;
 
 const int MAX = 801;
-const int INF = 2147483647;
+const int INF = 800001;
 int vertex, edge;
 int via1, via2;
 int from, to, dist;
@@ -18,12 +18,12 @@ bool via2tovia1 = true;
 priority_queue< pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>> > pq;
 
 void init() {
-    fill(&distlist[1], &distlist[vertex+1], INF);
+    fill(&distlist[1], &distlist[1]+vertex, INF);
 }
 
 void input() {
     scanf("%d %d", &vertex, &edge);
-    fill(&graph[0][0], &graph[MAX][MAX], INF);
+    fill(&graph[0][0], &graph[0][0]+641601, INF);
     for(int i = 1; i <= vertex; i++) {
         graph[i][i] = 0;
     }
