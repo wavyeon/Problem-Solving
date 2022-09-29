@@ -26,7 +26,7 @@ void Union(int x, int y) {
 
 void init() {
     cin >> people >> party;
-    cin >> knowingPerson;
+    cin >> knowing;
     for(int i = 0; i < knowing; i++) {
         cin >> knowingPerson;
         knowingPeople.push_back(knowingPerson);
@@ -43,7 +43,7 @@ void init() {
             }
             else {
                 cur = partyPerson;
-                Union(Find(pre), Find(cur));
+                Union(pre, cur);
                 pre = cur;
             }
             partyPeople[i].push_back(partyPerson);
@@ -64,8 +64,8 @@ void solve() {
             }
         }
         if(liable == false) {
-                count--;
-            }
+            count--;
+        }
     }
     cout << count << "\n";
 }
