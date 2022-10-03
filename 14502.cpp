@@ -83,7 +83,6 @@ void locateWall(int idx, int count) {
             int wallY = wallLocation[i] / m;
             int wallX = wallLocation[i] % m;
             testMap[wallY][wallX] = wall;
-            // cout << wallY << ". " << wallX << endl;
         }
         spreadVirus();
     }
@@ -91,7 +90,6 @@ void locateWall(int idx, int count) {
         for(int k = idx; k < maxIdx; k++) {
             int i = k / m;
             int j = k % m;
-            // cout << i << " , " << j << endl;
             if(originalMap[i][j] == space) {
                 wallLocation[count] = k;
                 locateWall(k+1, count+1);
