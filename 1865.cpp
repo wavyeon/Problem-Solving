@@ -64,9 +64,6 @@ void Bellman_Ford() {
         // 이미 n-1번 돌아서 n개의 노드를 연결한 상태임
         // 그런데도 갱신되는 경우가 있다면? 음의 사이클이 존재하는 것
         edge cur = edges[i];
-        if(dist[cur.from] == INF) {
-            continue;
-        }
         if(dist[cur.from] + cur.time < dist[cur.to]) {
             answer = "YES";
         }
