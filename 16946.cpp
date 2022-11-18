@@ -28,8 +28,10 @@ void input() {
     cout.tie(0);
     cin >> n >> m;
     for(int i = 0; i < n; i++) {
+        string line;
+        cin >> line;
         for(int j = 0; j < m; j++) {
-            scanf("%1d", &map[i][j]);
+            map[i][j] = line[j] - '0';
         }
     }
 }
