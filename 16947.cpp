@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <stack>
+#include <queue>
+#include <algorithm>
 #define endl '\n'
 
 using namespace std;
@@ -9,11 +11,12 @@ int station, from, to, testCase, cycleStart;
 const int MAX = 3001;
 vector<vector<int>> graph(MAX);
 bool dfsVisited[MAX];
-bool bfsVisited[MAX];
+
 stack<int> st;
 vector<int> cycle;
 bool cycleIndex[MAX];
 bool cycleFound;
+int answer[MAX];
 
 typedef struct {
     int num;
@@ -33,11 +36,6 @@ void init() {
 }
 
 void dfs(int prev, int cur, vector<int> history) {
-    // cout << "현재: " << cur << endl;
-    // for(int i = 0; i < history.size(); i++) {
-    //     cout << history[i] << " ";
-    // }
-    // cout << endl;
     for(int i = 0; i < graph[cur].size(); i++) {
         if(cycleFound == true) {
             return;
@@ -47,12 +45,7 @@ void dfs(int prev, int cur, vector<int> history) {
             if(dfsVisited[next] == true) { // 이전에 방문한 적 있음 -> 사이클 발견
                 cycleStart = next;
                 cycle = history;
-                // cout << "!" << endl;
-                // for(int i = 0; i < history.size(); i++) {
-                //     cout << history[i] << " ";
-                // }
                 cycleFound = true;
-                // return;
             }
             else {
                 st.push(next);
@@ -71,25 +64,41 @@ void findCycle() {
     vector<int> v;
     v.push_back(1);
     dfs(0, 1, v);
-    // cout << cycleStart << endl;
-    for(int i = 0; i < cycle.size(); i++) {
-        // cout << cycle[i] << " ";
+    auto it = find(cycle.begin(), cycle.end(), cycleStart);
+    for(int i = it - cycle.begin(); i < cycle.size(); i++) {
         cycleIndex[cycle[i]] = true;
     }
 }
 
 void bfs(int start) {
+    bool bfsVisited[MAX] = {false, };
     queue<subway> q;
     subway depart = {start, 0};
     q.push(depart);
+    bfsVisited[0] = true;
     while(!q.empty()) {
-        
+        subway cur = q.front();
+        q.pop();
+        if(cycleIndex[cur.num] == true) {
+            answer[start] = cur.dist;
+            return;
+        }
+        for(int i = 0; i < graph[cur.num].size(); i++) {
+            if(bfsVisited[graph[cur.num][i]] == false) {
+                subway next = {graph[cur.num][i], cur.dist+1};
+                q.push(next);
+                bfsVisited[graph[cur.num][i]] = true;
+            }
+        }
     }
 }
 
 void findDist() {
     for(int i = 1; i <= station; i++) {
         bfs(i);
+    }
+    for(int i = 1; i <= station; i++) {
+        cout << answer[i] << " ";
     }
 }
 
