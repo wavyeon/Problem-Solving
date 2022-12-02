@@ -1,4 +1,4 @@
-V = int(input())
+n = int(input())
 vote = list(str(input()))
 
 A = B = 0
