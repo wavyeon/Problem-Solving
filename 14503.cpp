@@ -1,35 +1,39 @@
 #include <iostream> 
 using namespace std;
 
-int n, m, startX, startY, nextX, nextY, dir, dirValue, tmp;
+int n, m, startX, startY, nextX, nextY, lookingDir;
 int cnt = 1;
 int map[51][51];
 bool stop = false;
 bool movable[51][51];
-int dirSelect[4] = {0, 3, 2, 1}; // modular 연산으로 나타낼 수 있을 것 같음
-int oppdX[4] = {0,1,0,-1};
+int dirSelect[4] = {0, 3, 2, 1}; // modular 연산 이용
+int oppdX[4] = {0,-1,0,1};
 int oppdY[4] = {1,0,-1,0};
 
-int dX[4][4] = {
-    {0,-1,0,1},
-    {1,0,-1,0},
-    {0,1,0,-1},
-    {-1,0,1,0}
-};
+// int dX[4][4] = {
+//     {0,-1,0,1},
+//     {1,0,-1,0},
+//     {0,1,0,-1},
+//     {-1,0,1,0}
+// };
 
-int dY[4][4] = {
-    {-1,0,1,0},
-    {0,-1,0,1},
-    {1,0,-1,0},
-    {0,1,0,-1}
-};
+int dx[4] = {0,1,0,-1};
+
+// int dY[4][4] = {
+//     {-1,0,1,0},
+//     {0,-1,0,1},
+//     {1,0,-1,0},
+//     {0,1,0,-1}
+// };
+
+int dy[4] = {-1,0,1,0};
 
 void init() {
     cin.tie(0);
     cout.tie(0);
     ios::sync_with_stdio(false);
     cin >> n >> m;
-    cin >> startY >> startX >> dir;
+    cin >> startY >> startX >> lookingDir;
     for(int i = 0; i < n; i++) {
         for(int j = 0; j < m; j++) {
             movable[i][j] = 1;
@@ -43,52 +47,34 @@ void init() {
             } 
         }
     }
-    cout << "movable" << endl;
-    for(int i = 0; i < n; i++) {
-        for(int j = 0; j < m; j++) {
-            cout << movable[i][j] << " ";
-        }
-        cout << endl;
-    }
 }
 
 void solve() {
     do {
-        cout << "시작: " << startY << " " << startX << " " << dir << endl;
         movable[startY][startX] = 0;
-        bool goBack = true;
+        bool noWay = true;
         for(int i = 0; i < 4; i++) {
-            nextX = startX + dX[dir][i];
-            nextY = startY + dY[dir][i];
-            dir = dirSelect[(dir + i) % 4];
-            cout << "탐색: " << nextY << " " << nextX << " " << dir << " " << movable[nextY][nextX] << endl;
+            int searchDir = (3 - i + lookingDir) % 4; // 바라보는 방향 기준 왼쪽부터 반시계 방향으로 
+            // nextX = startX + dX[(lookingDir + 3) % 4][i]; // dx와 dy는 탐색을 시작하는 방향(0,1,2,3)부터 반시계방향으로 이루어짐
+            // nextY = startY + dY[(lookingDir + 3) % 4][i]; // 이 방법 버림
+            nextX = startX + dx[searchDir]; // dx와 dy를 각 방향마다 설정해주고 searchDir으로 dx와 dy값 결정
+            nextY = startY + dy[searchDir]; // 이 방법 사용
             if(movable[nextY][nextX] == 1) {
-                cout << "발견!" << endl;
                 movable[nextY][nextX] = 0;
                 startX = nextX;
                 startY = nextY;
-                goBack = false;
+                noWay = false;
                 cnt++;
+                lookingDir = searchDir;
                 break;
             }
         }
-        if(goBack) { // 사방에 갈 곳 없음
-            startX = startX + oppdX[dir];
-            startY = startY + oppdY[dir];
+        if(noWay) { // 사방에 갈 곳 없음
+            startX = startX + oppdX[lookingDir];
+            startY = startY + oppdY[lookingDir];
             if(map[startY][startX] == 1) { // 후진도 못함
                 stop = true;
             }
-        }
-        if(tmp == 4) {
-            break;
-        }
-        tmp++;
-        cout << "movable" << endl;
-        for(int i = 0; i < n; i++) {
-            for(int j = 0; j < m; j++) {
-                cout << movable[i][j] << " ";
-            }
-            cout << endl;
         }
     } while(!stop);
     cout << cnt << endl;
