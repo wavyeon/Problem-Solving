@@ -1,6 +1,8 @@
 #include <iostream>
 #include <stack>
 #include <vector>
+#include <queue>
+#define endl '\n'
 
 using namespace std;
 
@@ -17,39 +19,28 @@ void init() {
 }
 
 void solve() {
-    int count = 0;
+    char target = bomb[bomb.length()-1];
     for(int i = 0; i < str.length(); i++) {
-        if(!st.empty() && st.top() == bomb[count]) {
-            count++;
-            cout << i << " 시작" << endl;
-            cout << count << " " << bomb.length() << endl;
-            if(count == bomb.length()) {
-                for(int j = 0; j < bomb.length(); j++) {
+        st.push(str[i]);
+        if(st.size() >= bomb.size() && st.top() == target) {
+            // 반례의 핵심!! (seg fault)
+            // bomb이 str보다 길 때에는 따져볼 필요가 없음 (따지면 seg fault 발생)
+            // 정확하게는 문자열을 stack에 push/pop하면서 bomb이 stack보다 커지는 경우에 따지면 안되는 것. 따라서 첫번째 조건을 추가해야함
+            stack<char> tmp; // stack에서 뺐다 넣을려면 다른 stack에 임시 저장하는 방식 사용!!
+            for(int j = bomb.length()-1; j >= 0; j--) {
+                if(st.top() == bomb[j]) {
+                    tmp.push(st.top());
                     st.pop();
                 }
-                continue;
+                else {
+                    while(!tmp.empty()) {
+                        st.push(tmp.top());
+                        tmp.pop();
+                    }
+                }
             }
         }
-        else {
-            count = 0;
-            if(!st.empty() && st.top() == bomb[count]) {
-                count = 1;
-            }
-        }
-        st.push(str[i]);
     }
-   
-
-    // int tmp = st.size();
-    //         for(int i = 0; i < tmp; i++) {
-    //             answer.push_back(st.top());
-    //             st.pop();
-    //         }
-    //         for(int i = tmp; i >= 0; i--) {
-    //             cout << answer[i];
-    //         }    
-
-
     if(st.empty()) {
         cout << "FRULA" << endl;
     }
