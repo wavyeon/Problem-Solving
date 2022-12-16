@@ -20,6 +20,9 @@ void init() {
     for(int i = 0; i < n; i++) {
         cin >> par;
         parent[i] = par;
+        if(par == -1) {
+            continue;
+        }
         child[par].push_back(i);
     }
     cin >> del;
@@ -40,7 +43,7 @@ int countPruningLeaf(int del) {
     queue<int> q;
 
     if(child[del].size() == 0) { // 지우려하는 노드가 리프 노드일 때
-        return 1;
+        cnt = 1;
     }
     else {
         q.push(del);
