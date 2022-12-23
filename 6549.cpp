@@ -1,33 +1,47 @@
-#include<iostream>
-#include<algorithm>
-#include<stack>
+#include <iostream>
+#include <algorithm>
+#include <stack>
+#include<memory.h>
 #define endl '\n'
 
 using namespace std;
 
-int n, ans, h[100002];
+int n;
+long long ans, h[100002];
 stack<int> st;
 
 void solve() {
-    cin >> n;
-	for (int i = 1; i <= n; i++) {
-        cin >> h[i];
-    }
-	st.push(0);
-	for (int i = 1; i <= n + 1; i++) {
-		while (!st.empty() && h[st.top()] > h[i]) {
-			int check = st.top();
-            int vertical = h[check];
-			st.pop();
-            int horizontal = (i-1 - st.top());
-			ans = max(ans, vertical * horizontal);
+	while(true) {
+		cin >> n;
+		if(n == 0) {
+			break;
 		}
-		st.push(i);
+		for (int i = 1; i <= n; i++) {
+        	cin >> h[i];
+    	}
+		st.push(0);
+		for (int i = 1; i <= n + 1; i++) {
+			while (!st.empty() && h[st.top()] > h[i]) {
+				int check = st.top();
+            	long long vertical = h[check];
+				st.pop();
+				long long horizontal = i-1 - st.top();
+				ans = max(ans, (long long)(vertical * horizontal));
+			}
+			st.push(i);
+		}
+		cout << ans << endl;
+		st = stack<int> ();
+		ans = 0;
+		memset(h, 0, 100000); // h[n+1]에 0이 들어가있어야 마지막 i에서도 while문 안에 들어가 최대값을 구할 수 있음
 	}
-	cout << ans;
+
 }
 
 int main() {
+	cin.tie(0);
+	cout.tie(0);
+	ios::sync_with_stdio(false);
     solve();
 }
 
