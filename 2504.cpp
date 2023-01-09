@@ -1,9 +1,14 @@
 #include <iostream>
 #include <stack>
+#include <cmath>
+#define endl '\n'
 
 using namespace std;
 
 string bracket;
+stack<char> small;
+stack<char> big;
+int value, tmp;
 
 void init() {
     cin.tie(0);
@@ -15,8 +20,41 @@ void init() {
 void solve() {
     for(int i = 0; i < bracket.length(); i++) {
         if(bracket[i] == '(') {
-            stack<char>
+            small.push('(');
         }
+        else if(bracket[i] == '[') {
+            big.push('[');
+        }
+        else if(bracket[i] == ')') {
+            if(!small.empty()) {
+                small.pop();
+                if(bracket[i-1] == '(') {
+                    value += pow(2, small.size()) * pow(3, big.size()) * 2;
+                }
+            }
+            else {
+                cout << 0 << endl;
+                return;
+            }
+        }
+        else if(bracket[i] == ']') {
+            if(!big.empty()) {
+                big.pop();
+                if(bracket[i-1] == '[') {
+                    value += pow(2, small.size()) * pow(3, big.size()) * 3;
+                }
+            }
+            else {
+                cout << 0 << endl;
+                return;
+            }
+        }
+    }
+    if(!small.empty() || !big.empty()) {
+        cout << 0 << endl;
+    }
+    else {
+        cout << value << endl;
     }
 }
 
