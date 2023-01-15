@@ -5,10 +5,9 @@
 
 using namespace std;
 
-int n, output;
+int n, cnt, mid, rig;
 int people[MAX];
-int tallerLefter[MAX];
-stack<int> st;
+stack<int> decr;
 
 void init() {
     cin >> n;
@@ -18,31 +17,72 @@ void init() {
 }
 
 void solve() {
-    for(int i = 0; i < n-1; i++) {
-        if(!st.empty() && st.top() < people[i]) {
-            while(!st.empty() && st.top() < people[i]) {
-                st.pop();
-            }
-        }
-        tallerLefter[i] = st.size();
-        st.push(people[i]);
-    }
-    for(int i = 0; i < n-1; i++) {
-        cout << tallerLefter[i] << " ";
-    }
-    cout << endl;
-    for(int i = 1; i < n; i++) {
-        if(people[i] >= people[i-1]) {
-            output += (tallerLefter[i-1] + 1);
-            // cout << tallerLefter[i-1] + 1 << " ";
-        }
-        else {
-            output += 1;
-            // cout << 1 << " ";
-        }
-    }
+    
+
+    // for(int i = 0; i < n; i++) {
+    //     if(decr.empty()) {
+    //         decr.push(people[i]);
+    //     }
+    //     else {
+    //         if(decr.top() > people[i]) {
+    //             cnt++;
+    //             decr.push(people[i]);      
+    //         }
+    //         else if (decr.top() == people[i]) {
+    //             stack<int> tmp = decr;
+    //             rig = people[i];
+    //             mid = tmp.top();
+    //             cnt++;
+    //             tmp.pop();
+    //             while(!tmp.empty() && rig >= mid && tmp.top() >= mid) {
+    //                 mid = tmp.top();
+    //                 cnt++;
+    //                 tmp.pop();
+    //             }
+    //             decr.push(people[i]);
+    //         }
+    //         else if (decr.top() < people[i]) {
+    //             stack<int> tmp = decr;
+    //             rig = people[i];
+    //             mid = tmp.top();
+    //             cnt++;
+    //             tmp.pop();
+    //             while(!tmp.empty() && rig >= mid && tmp.top() >= mid) {
+    //                 mid = tmp.top();
+    //                 cnt++;
+    //                 tmp.pop();
+    //             }
+    //         }
+    //     }
+    // }
+    // cout << cnt << endl;
+
+
+    // for(int i = 0; i < n-1; i++) {
+    //     if(!st.empty() && st.top() < people[i]) {
+    //         while(!st.empty() && st.top() < people[i]) {
+    //             st.pop();
+    //         }
+    //     }
+    //     tallerLefter[i] = st.size();
+    //     st.push(people[i]);
+    // }
+    // for(int i = 0; i < n-1; i++) {
+    //     cout << tallerLefter[i] << " ";
+    // }
     // cout << endl;
-    cout << output << endl;
+    // for(int i = 1; i < n; i++) {
+    //     if(people[i] >= people[i-1]) {
+    //         output += (tallerLefter[i-1] + 1);
+    //         // cout << tallerLefter[i-1] + 1 << " ";
+    //     }
+    //     else {
+    //         output += 1;
+    //         // cout << 1 << " ";
+    //     }
+    // }
+    // // cout << endl;
+    // cout << output << endl;
 }
 
 int main() {
