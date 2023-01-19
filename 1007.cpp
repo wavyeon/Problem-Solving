@@ -2,40 +2,38 @@
 #include <vector>
 #include <cmath>
 #include <cstring>
-#define pii pair<int, int>
+#define pii pair<int, int> // pair 간결하게 사용하기!
+#define MAX 1e9+7
+#define endl '\n'
  
 using namespace std;
  
-int N;
+int n, test;
 vector<pii> points;
 double result;
 bool visited[21];
  
-double vec_sum(){
+double vectorSum(){
     pii vec = {0, 0};
-    for(int i = 0; i < N; i++){
-        // 시작점인 경우
-        if(visited[i]){
+    for(int i = 0; i < n; i++){
+        if(visited[i]){ // 시작점인 경우
             vec.first -= points[i].first;
             vec.second -= points[i].second;
         }
-        // 도착점인 경우
-        else{
+        else{ // 도착점인 경우
             vec.first += points[i].first;
             vec.second += points[i].second;
         }
     }
-    
     return sqrt(pow(vec.first, 2) + pow(vec.second, 2));
 }
  
 void dfs(int now, int cnt){
-    if(cnt == N/2){
-        result = min(result, vec_sum());
+    if(cnt == n/2){
+        result = min(result, vectorSum()); // 매번 크기 비교하는 코드 필요 없음!
         return;
     } 
-    
-    for(int i = now; i < N; i++){
+    for(int i = now; i < n; i++){
         visited[i] = true;
         dfs(i+1, cnt+1);
         visited[i] = false;
@@ -43,29 +41,28 @@ void dfs(int now, int cnt){
 }
  
 void input(){
-    int a, b;
-    cin >> N;
-    for(int i = 0; i < N; i++){
-        cin >> a >> b;
-        points.push_back({a, b});
+    int x, y;
+    cin >> n;
+    for(int i = 0; i < n; i++){
+        cin >> x >> y;
+        points.push_back({x, y});
     }
 }
- 
-int main(){
-    int test;
+
+void solve() {
     cin >> test;
-    while(test--){
+    for(int i = 0; i < test; i++) {
         memset(visited, 0, sizeof(visited));
         points.clear();
-        result = 1e9+7;
-    
+        result = MAX; 
         input();
-        
         dfs(0, 0);
         printf("%.7lf\n", result);
     }
-    
-    return 0;
+} 
+
+int main(){
+    solve();    
 }
 
 // void matchVector(int curX, int curY, int cnt, int idx) {
@@ -169,7 +166,3 @@ int main(){
 //         // cout << tmp << endl;
 //     }
 // }
-
-int main() {
-    solve();
-}
