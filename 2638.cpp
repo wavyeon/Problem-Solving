@@ -1,4 +1,8 @@
-(#include <iostream>
+// fill 함수에 대한 고찰
+// fill 함수의 parameter는 시작위치, 끝위치(자신은 포함 X), 값
+// 2차원 배열[MAX][MAX] fill 하려면 끝위치 값은 [MAX][0]이 되어야 함!!
+// 2차원 배열[MAX][MAX]의 마지막 칸은 [MAX-1][MAX-1] 이기 때문!!
+#include <iostream>
 #include <stack>
 #include <algorithm>
 #define MAX 101
