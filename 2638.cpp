@@ -1,5 +1,6 @@
-#include <iostream>
+(#include <iostream>
 #include <stack>
+#include <algorithm>
 #define MAX 101
 #define endl '\n'
 #define coor pair<int,int>
@@ -11,7 +12,7 @@
 
 using namespace std;
 
-int n, m, cheese;
+int n, m, cheese, sec;
 int container[MAX][MAX];
 int inout[MAX][MAX];
 stack<coor> st;
@@ -32,12 +33,6 @@ void init() {
             }
         }
     }
-    // for(int i = 0; i < n; i++) {
-    //     for(int j = 0; j < m; j++) {
-    //         cout << container[i][j] << " ";
-    //     }
-    //     cout << endl;
-    // }
 }
 
 void check_inout() {
@@ -63,26 +58,22 @@ void check_inout() {
             }
         }
     }
-    // for(int i = 0; i < n; i++) {
-    //     for(int j = 0; j < m; j++) {
-    //         cout << inout[i][j] << " ";
-    //     }
-    //     cout << endl;
-    // }
 }
 
-void count_exposed() {
+void remove_exposed() {
     for(int i = 0; i < n; i++) {
         for(int j = 0; j < m; j++) {
             if(container[i][j] == 1 && isVisited[i][j] == notVisited) { // 치즈이면서, 체크하지 않은 경우
+                isVisited[i][j] = Visited;
+                int exposedPart = 0;
                 for(int k = 0; k < All_DIR; k++) {
-                    int exposedPart = 0;
                     if(inout[i+dy[k]][j+dx[k]] == Out && container[i+dy[k]][j+dx[k]] == 0) { // 상하좌우에 외부 공기가 있으면 카운팅
                         exposedPart++;
                     }
                 }
                 if(exposedPart >= 2) {
-                    
+                    container[i][j] = 0;
+                    cheese--;
                 }
             }
         }
@@ -91,13 +82,32 @@ void count_exposed() {
 
 void solve() {
     while(true) {
-        // isVisited isout 초기화
-        check_inout();
-        // isVisited 초기화
-        count_exposed();
-    }
-    
+        if(cheese == 0) {
+            cout << sec << endl;
+            break;
+        }
 
+        // fill(&isVisited[0][0], &isVisited[MAX][MAX], 0);
+        // fill(&inout[0][0], &inout[MAX][MAX], 0);
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < m; j++) {
+                isVisited[i][j] = 0;
+                inout[i][j] = 0;
+            }
+        }
+        
+        check_inout();
+
+        // fill(&isVisited[0][0], &isVisited[MAX][MAX], 0);
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < m; j++) {
+                isVisited[i][j] = 0;
+            }
+        }
+
+        remove_exposed();
+        sec++;
+    }
 }
 
 int main() {
