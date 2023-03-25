@@ -28,9 +28,9 @@ void isPalindrome() {
             palindrome[i][i+1] = true;
         }
     }
-    for(int part = 3; part <= length; part++) { // 길이가 3 이상인 부분문자열
-        for(int start = 0; start < length - part + 1; start++) { // 길이 1씩 증가시켜가며 확인 
-            int end = start + length - 1; 
+    for(int part = 3; part <= length; part++) { // 길이가 3 이상인 부분문자열, 길이 1씩 증가시켜가며 확인 
+        for(int start = 0; start < length - part + 1; start++) {
+            int end = start + part - 1;
             if(str[start] == str[end] && palindrome[start+1][end-1] == true) {
                 // 팰린드롬 조건
                 // 1. 첫 문자와 마지막 문자가 같다
@@ -43,7 +43,7 @@ void isPalindrome() {
 
 void countMinDivision() {
     // dp[i] 값을 순차적으로 채워나감 (길이가 1인 문자열부터 길이가 length인 문자열까지)
-    for(int end = 0; end <= length; end++) { // end값이 사실상 문자열의 길이를 의미
+    for(int end = 0; end < length; end++) { // end값이 사실상 문자열의 길이를 의미
         dp[end] = 2e9;
         for(int start = 0; start <= end; start++) {
             // palindrome[0][end], palindrome[1][end], ... palindrome[end][end] 를 확인
