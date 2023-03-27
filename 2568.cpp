@@ -1,68 +1,78 @@
+// LIS를 구하는 두가지 알고리즘
+// DP => O(N^2)
+// BINARY SEARCH(lower bound) => O(NlogN)
+// 이진탐색은 정확히 같은 값이 있는 곳 찾는 것
+// LOWER BOUND는 주어진 값보다 같거나 큰 값이 처음으로 나오는 위치 찾는 것
+// UPPER BOUND는 주어진 값보다 큰 값이 처음으로 나오는 위치 찾는 것
+// lower, upper bound는 중복된 값이 있을 때 주로 사용
+// https://jackpot53.tistory.com/33
+
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#include <string>
-#include <cstring>
-#include <map>
+#define MAX 100001
+#define endl "\n"
+
 using namespace std;
+ 
+struct line {
+    int left;
+    int right;
+};
+ 
+int n;
+line lines[MAX];
+vector<line> LIS;
 
-int N;
-vector<pair<int, int>> arr; // 전봇대 (A, B)를 저장하는 배열
-vector<int> sarr; // 전봇대 A를 정렬했을 때의 전봇대 B 배열
-map<int, int> m; // (key, value) == 전봇대 (B, A)
+bool cmp(line A, line B) {
+    if (A.left < B.left) { // 왼쪽 전봇대 기준으로 정렬
+        return true; // true => 순서바꾸지 않아도 됨
+    }
+    else {
+        return false; // false => 순서 바꿔야 함
+    }
+}
 
-int main(){
-	scanf("%d", &N);
-	arr = vector<pair<int, int>>(N);
-	sarr = vector<int>(N);
-	
-	for(int i=0; i<N; i++){
-		int key, value;
-		scanf("%d %d", &value, &key);
-		arr[i].first = value;
-		arr[i].second = key;
-		m[key] = value;
-	}
-	
-	sort(arr.begin(), arr.end());
-	
-	for(int i=0; i<N; i++){
-		sarr[i] = arr[i].second;
-	}
-	
-	vector<int> v; // 이분탐색을 진행하는 배열
-	vector<int> iarr; // 배열에 추가되는 숫자의 인덱스를 저장하는 배열
-	
-	for(int i=0; i<N; i++){
-		if(i == 0){
-			v.push_back(sarr[i]);
-			iarr.push_back(1);
-			continue;
+void init() {
+    cin.tie();
+    cout.tie();
+    ios::sync_with_stdio(false);
+    cin >> n;
+    for(int i = 1; i <= n; i++) {
+        cin >> lines[i].left >> lines[i].right;
+    }
+	sort(lines + 1, lines + n + 1, cmp); // 왼쪽 전봇대 기준으로 정렬
+}
+
+void solve() {
+	LIS.push_back({0,-1});
+	for(int i = 1; i <= n; i++) {
+		int rightVal = lines[i].right;
+		if(rightVal > LIS[LIS.size()-1].right) { // LIS 벡터의 마지막 요소보다 큰 경우 => 뒤에 삽입
+			LIS.push_back(lines[i]);
 		}
-		int idx = lower_bound(v.begin(), v.end(), sarr[i]) - v.begin();
-		int len = v.size();
-		// 추가하는 숫자가 가장 마지막 숫자보다 크다면
-		if(idx == len) v.push_back(sarr[i]);
-		else v[idx] = sarr[i]; // 않다면 교체
-		iarr.push_back(idx + 1); // 인덱스 배열에 인덱스 넣기
+		else { // LIS 벡터의 마지막 요소보다 작은 경우 => lower bound로 값을 교체할 위치 찾기 
+			int low = 0;
+			int high = LIS.size();
+			while(low < high) {
+				int mid = low + ((high - low) / 2);
+				if(rightVal >= LIS[mid].right) {
+					high = mid;
+				}
+				else if (rightVal < LIS[mid].right) {
+					low = mid + 1;
+				}
+			}
+			LIS[low] = lines[i];
+		}
 	}
-	
-	int len = v.size();
-	vector<int> ans(len); // LIS 배열
-	// LIS를 구하는 과정
-	for(int i=N-1, n=len; i>=0; i--){
-		if(iarr[i] == n)
-			ans[--n] = sarr[i];
+	cout << LIS.size() << endl;
+	for(int i = 0; i < LIS.size(); i++) {
+		cout << LIS[i].left << " " << LIS[i].right << endl;
 	}
-	// LIS에 속하는 숫자를 제하는 과정
-	for(int i=0; i<len; i++){
-		m[ans[i]] = -1;
-	}
-	
-	printf("%d \n", N - len);
-	for(int i=0; i<N; i++){
-		int key = sarr[i];
-		if(m[key] == -1) continue;
-		printf("%d \n", m[key]);
-	}
+}
+
+int main(void) {
+    init();
+    solve();
 }
