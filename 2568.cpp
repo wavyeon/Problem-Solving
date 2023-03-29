@@ -10,6 +10,8 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <map>
+#include <set>
 #define MAX 100001
 #define endl "\n"
 
@@ -23,6 +25,9 @@ struct line {
 int n;
 line lines[MAX];
 vector<line> LIS;
+int lowerBoundIdx[MAX]; // lowerBound로 요소 삽입하면서 삽입되는 "위치" 저장 (뒤에서부터 내림차순하면 LIS)
+map<int,int> telepole; // 각 전깃줄의 전봇대 B에 연결된 위치(key)와 전봇대 B에 연결된 위치(value)를 매핑
+set<int> haveToRemove; // 최소로 제거해야하는 전깃줄의 A 위치, 처음에는 모든 전깃줄의 A 위치 삽입 
 
 bool cmp(line A, line B) {
     if (A.left < B.left) { // 왼쪽 전봇대 기준으로 정렬
@@ -40,6 +45,8 @@ void init() {
     cin >> n;
     for(int i = 1; i <= n; i++) {
         cin >> lines[i].left >> lines[i].right;
+		telepole[lines[i].right] = lines[i].left;
+		haveToRemove.insert(lines[i].left);
     }
 	sort(lines + 1, lines + n + 1, cmp); // 왼쪽 전봇대 기준으로 정렬
 }
@@ -50,6 +57,7 @@ void solve() {
 		int rightVal = lines[i].right;
 		if(rightVal > LIS[LIS.size()-1].right) { // LIS 벡터의 마지막 요소보다 큰 경우 => 뒤에 삽입
 			LIS.push_back(lines[i]);
+			lowerBoundIdx[i] = LIS.size()-1; // LIS 배열에 삽입되는 위치 (== LIS.size()-1)를 저장
 		}
 		else { // LIS 벡터의 마지막 요소보다 작은 경우 => lower bound로 값을 교체할 위치 찾기 
 			int low = 0;
@@ -57,18 +65,41 @@ void solve() {
 			while(low < high) {
 				int mid = low + ((high - low) / 2);
 				if(rightVal >= LIS[mid].right) {
-					high = mid;
+					low = mid + 1;
 				}
 				else if (rightVal < LIS[mid].right) {
-					low = mid + 1;
+					high = mid;
 				}
 			}
 			LIS[low] = lines[i];
+			lowerBoundIdx[i] = low; // LIS 배열에 삽입되는 위치 (== low)를 저장 
 		}
 	}
-	cout << LIS.size() << endl;
-	for(int i = 0; i < LIS.size(); i++) {
-		cout << LIS[i].left << " " << LIS[i].right << endl;
+
+	cout << "lowerbound" << endl;
+	for(int i = 1; i <= n; i++) {
+		cout << lowerBoundIdx[i] << " ";
+	}
+	cout << endl;
+
+	cout << n - (LIS.size()-1) << endl;
+	// for(int i = 0; i < LIS.size(); i++) {
+	// 	cout << LIS[i].left << " " << LIS[i].right << endl;
+	// }
+
+	int lisIdx = LIS.size()-1; // LIS.size()와 같음	
+	// lines[n].right == 남아있어야하는 전깃줄의 B 위치
+	// telepole[lines[n].right] == 남아있어야하는 전깃줄의 A 위치
+	// 남아있어야하는 전깃줄이므로 제거해야하는 전깃줄 리스트에서 제거해줘야 함
+	for(int i = n; i >= 1; i--) {
+		if(lowerBoundIdx[i] == lisIdx) {
+			haveToRemove.erase(telepole[lines[i].right]);
+			// cout << "지울놈: " << lines[i].right << endl;
+			lisIdx--;
+		}
+	}
+	for (set<int>::iterator it = haveToRemove.begin(); it != haveToRemove.end(); it++) {
+		cout << *it << endl;
 	}
 }
 
