@@ -75,26 +75,15 @@ void solve() {
 			lowerBoundIdx[i] = low; // LIS 배열에 삽입되는 위치 (== low)를 저장 
 		}
 	}
-
-	cout << "lowerbound" << endl;
-	for(int i = 1; i <= n; i++) {
-		cout << lowerBoundIdx[i] << " ";
-	}
-	cout << endl;
-
 	cout << n - (LIS.size()-1) << endl;
-	// for(int i = 0; i < LIS.size(); i++) {
-	// 	cout << LIS[i].left << " " << LIS[i].right << endl;
-	// }
 
-	int lisIdx = LIS.size()-1; // LIS.size()와 같음	
-	// lines[n].right == 남아있어야하는 전깃줄의 B 위치
-	// telepole[lines[n].right] == 남아있어야하는 전깃줄의 A 위치
-	// 남아있어야하는 전깃줄이므로 제거해야하는 전깃줄 리스트에서 제거해줘야 함
+	int lisIdx = LIS.size()-1;
 	for(int i = n; i >= 1; i--) {
 		if(lowerBoundIdx[i] == lisIdx) {
 			haveToRemove.erase(telepole[lines[i].right]);
-			// cout << "지울놈: " << lines[i].right << endl;
+			// lines[i].right == 남아있어야하는 전깃줄의 B 위치
+			// telepole[lines[i].right] == 남아있어야하는 전깃줄의 A 위치
+			// 남아있어야하는 전깃줄이므로 제거해야하는 전깃줄 리스트에서 제거해줘야 함
 			lisIdx--;
 		}
 	}
