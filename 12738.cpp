@@ -1,0 +1,48 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#define endl "\n"
+#define MAX 1000010
+using namespace std;
+ 
+int N;
+int Arr[MAX];
+vector<int> V;
+ 
+void Input()
+{
+    cin >> N;
+    for (int i = 1; i <= N; i++) cin >> Arr[i];
+}
+ 
+void Solution()
+{
+    for (int i = 1; i <= N; i++)
+    {
+        if (V.size() == 0 || V[V.size() - 1] < Arr[i]) V.push_back(Arr[i]);
+        else
+        {
+            int Pos = lower_bound(V.begin(), V.end(), Arr[i]) - V.begin();
+            V[Pos] = Arr[i];
+        }
+    }
+    cout << V.size() << endl;
+}
+ 
+void Solve()
+{
+    Input();
+    Solution();
+}
+ 
+int main(void)
+{
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+ 
+//    freopen("Input.txt", "r", stdin);
+    Solve();
+ 
+    return 0;
+}
