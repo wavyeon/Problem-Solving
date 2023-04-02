@@ -2,47 +2,48 @@
 #include <vector>
 #include <algorithm>
 #define endl "\n"
-#define MAX 1000010
+#define MAX 1000001
+
 using namespace std;
  
-int N;
-int Arr[MAX];
-vector<int> V;
- 
-void Input()
-{
-    cin >> N;
-    for (int i = 1; i <= N; i++) cin >> Arr[i];
+int n;
+int arr[MAX];
+vector<int> ans;
+
+void init() {
+    cin.tie();
+    cout.tie();
+    ios::sync_with_stdio(false);
+    cin >> n;
+    for(int i = 1; i <= n; i++) {
+        cin >> arr[i];
+    }
 }
- 
-void Solution()
-{
-    for (int i = 1; i <= N; i++)
-    {
-        if (V.size() == 0 || V[V.size() - 1] < Arr[i]) V.push_back(Arr[i]);
-        else
-        {
-            int Pos = lower_bound(V.begin(), V.end(), Arr[i]) - V.begin();
-            V[Pos] = Arr[i];
+
+void solve() {
+    for(int i = 1; i <= n; i++) {
+        if(ans.size() == 0 || arr[i] > ans[ans.size()-1]) {
+            ans.push_back(arr[i]);
+        }
+        else {
+            int low = 0;
+            int high = ans.size();
+            while(low < high) {
+                int mid = low + (high - low) / 2;
+                if(arr[i] > ans[mid]) {
+                    low = mid + 1;
+                }
+                else {
+                    high = mid;
+                }
+            }
+            ans[low] = arr[i];
         }
     }
-    cout << V.size() << endl;
+    cout << ans.size() << endl;
 }
- 
-void Solve()
-{
-    Input();
-    Solution();
-}
- 
-int main(void)
-{
-    ios::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
- 
-//    freopen("Input.txt", "r", stdin);
-    Solve();
- 
-    return 0;
+
+int main() {
+    init();
+    solve(); 
 }
