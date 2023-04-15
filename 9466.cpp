@@ -3,6 +3,7 @@
 // 유방향 그래프 => 한 점에서의 DFS가 종료되기 전에 같은 점에서 DFS가 실행되었는지 여부 판단 (역방향 간선의 존재 여부 판단)
 // DFS는 재귀로!!
 // visited 배열과 finished 배열 사용 
+// https://nicotina04.tistory.com/148
 
 #include <iostream>
 #include <string.h>
