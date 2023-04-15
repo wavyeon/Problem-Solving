@@ -1,49 +1,42 @@
+// 그래프에서 사이클 판별
+// 무방향 그래프 =>  DFS로 방문한 점 다시 방문했는지 여부 판단 / union-find
+// 유방향 그래프 => 한 점에서의 DFS가 종료되기 전에 같은 점에서 DFS가 실행되었는지 여부 판단 (역방향 간선의 존재 여부 판단)
+// DFS는 재귀로!!
+// visited 배열과 finished 배열 사용 
+
 #include <iostream>
-#include <vector>
-#include <stack>
+#include <string.h>
 #define endl '\n'
 #define MAX 100001
 
 using namespace std;
 
-int test, student;
-vector<int> graph;
-bool visited[MAX];
+int test, grouped;
+int order = 1;
+int nextNode[MAX];
+int visitOrder[MAX]; // 0: 방문 안함, 자연수: 방문한 순서
+bool finished[MAX];
 
 void init() {
 	cin.tie(0);
 	cout.tie(0);
 	ios::sync_with_stdio(false);
 	cin >> test;
-	for(int i = 0; i < test; i++) {
-		cin >> student;
-		int wannabe;
-		for(int j = 1; j <= student; j++) {
-			cin >> wannabe;
-			graph[j].push_back(wannabe);
-			graph[wannabe].push_back(j);
-		}
-	}
 }
 
 void solve() {
-	for(int i = 1; i <= student; i++) {
-		if(!visited[i]) { // 아직 방문을 안 한 노드
-			findCycle();
-
-			stack<int> st;
-			st.push(i);
-			int teammate = 0;
-			while(!st.empty()) {
-				int cur = st.top();
-				st.pop();
-				teammate++;
-				for(int j = 0; j < graph[cur].size(); j++) {
-					if(!visited[j]) {
-						st.push(j);
-					}
-				}
-			}				
+	int n;
+	while(test--) {
+		cin >> n;
+		memset(visitOrder, 0, sizeof(visitOrder));
+		memset(finished, 0, sizeof(finished));
+		for(int i = 1; i <= n; i++) {
+			cin >> nextNode[i];
+		}
+		for(int i = 1; i <= n; i++) {
+			if(!visitOrder[i]) { // 아직 방문하지 않은 노드라면 dfs 탐색
+				dfs(i);
+			}
 		}
 	}
 }
@@ -56,8 +49,7 @@ int main() {
 
 
 
-
-// #include <iostream>
+// #include <iostream>	
 // #include <queue>
 // #include <cstring>
 // #define MAX 100001
