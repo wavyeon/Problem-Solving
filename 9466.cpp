@@ -25,10 +25,28 @@ void init() {
 	cin >> test;
 }
 
+void dfs(int cur) {
+	// cout << "방문: " << cur << endl; 
+	visitOrder[cur] = order++;
+	int next = nextNode[cur];
+	if(!visitOrder[next]) { // 방문안했으면 dfs
+		dfs(next);
+	}
+	else { // 방문했지만
+		if(!finished[next]) {// 다음 방문할 노드가 이미 dfs 호출된 상태인 경우 (visit 했지만 finish되지 않은 경우)
+			grouped += visitOrder[cur] - visitOrder[next] + 1; // dfs 호출한 동안 거쳐간 노드의 수 (사이클 형성한 노드 수)
+			// 자기 자신 가리키는 경우도 처리 가능
+		}
+	}
+	finished[cur] = true; // dfs 종료되었으므로 finished 처리
+}
+
 void solve() {
 	int n;
 	while(test--) {
 		cin >> n;
+		order = 1;
+		grouped = 0;
 		memset(visitOrder, 0, sizeof(visitOrder));
 		memset(finished, 0, sizeof(finished));
 		for(int i = 1; i <= n; i++) {
@@ -39,6 +57,7 @@ void solve() {
 				dfs(i);
 			}
 		}
+		cout << n - grouped << endl; // 전체 학생 수에서 그룹지어진 학생 수 빼기
 	}
 }
 
@@ -46,63 +65,3 @@ int main() {
 	init();
 	solve();
 }
-
-
-
-
-// #include <iostream>	
-// #include <queue>
-// #include <cstring>
-// #define MAX 100001
-// using namespace std;
-
-// int t, n;
-// int graph[MAX];
-// bool visited[MAX];
-// bool done[MAX];
-// int cnt;
-// void hasCycle( int node) {
-
-// 	visited[node] = true;
-// 	int next = graph[node];
-
-	
-// 	if (!visited[next]) {
-// 		hasCycle( next);
-// 	}
-// 	else if (!done[next]) {//방문은 했지만 아직 사이클이 아니라면 next까지 포함해서 사이클 완성
-// 		//자기 자신을 포함한 팀의 멤버를 카운트
-// 		for (int i = next; i != node; i = graph[i]) {
-// 			cnt++;
-// 		}
-// 		cnt++;
-// 	}
-// 	done[node] = true;
-// }
-
-
-// int main() {
-
-// 	ios::sync_with_stdio(false);
-// 	cin.tie(0);
-// 	cout.tie(0);
-// 	cin >> t;
-// 	while (t--) {
-// 		cin >> n;
-// 		for (int i = 1; i <= n; i++) {
-// 			cin >> graph[i];
-// 		}
-// 		for (int i = 1; i <= n; i++) {
-// 			if (!visited[i]) {
-// 				hasCycle(i);
-// 			}
-// 		}
-// 		cout << n-cnt << '\n';
-// 		cnt = 0;
-// 		memset(visited, false, sizeof(visited));
-// 		memset(done, false, sizeof(done));
-// 	}
-
-
-// 	return 0;
-// }
