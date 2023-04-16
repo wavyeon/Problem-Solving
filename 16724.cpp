@@ -70,7 +70,7 @@ void dfs(int i, int j) {
     }
     visited[i][j] = isCounted;
     // dfs 탐색을 종료한다는 건 사이클을 발견했다는 의미
-    // 발견한 것이 새 사이클이건, 기존의 사이클이건 카운팅이 이미 된 사이클이므로 isCounted 상태로 바꾸줌
+    // 발견한 것이 새 사이클이건, 기존의 사이클이건 카운팅이 이미 된 사이클이므로 isCounted 상태로 바꿔줌
 }
 
 void solve() {
