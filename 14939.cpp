@@ -1,9 +1,15 @@
 // https://technicolour.tistory.com/19
+// 누르는 순서 무의미, 최소값을 구하기 위해서는 중복 없어야 함!!
+// 따라서 왼쪽 위에서 오른쪽 아래로 순차적으로 접근
 #include <iostream>
+#define INF 2e9
 
 using namespace std;
 
 bool arr[11][11];
+int dx[4] = {0, 1, 0, -1};
+int dy[4] = {-1, 0, 1, 0};
+int ans = INF;
 
 void init() {
     cin.tie(0); cout.tie(0);
@@ -12,7 +18,7 @@ void init() {
     for(int i = 0; i < 10; i++) {
         for(int j = 0; j < 10; j++) {
             cin >> bulb;
-            if(bulb == 'O') {
+            if(bulb == 'O') { // 켜져 있는 경우에 true
                 arr[i][j] = true;
             }
         }
@@ -20,6 +26,8 @@ void init() {
 }
 
 void copyArr(bool copy[][11], bool original[][11]) {
+	// c++에서 매개변수로 배열 넘기면 주소 넘어가서 원본 배열 변함
+	// 따라서 경우의 수 따질 때마다 임시 배열에 원본 배열을 복사해서 사용
     for(int i = 0; i < 10; i++) {
         for(int j = 0; j < 10; j++) {
             copy[i][j] = original[i][j];
@@ -27,23 +35,62 @@ void copyArr(bool copy[][11], bool original[][11]) {
     }
 }
 
+bool inRange(int x, int y) {
+	if(x >= 0 && y >= 0 && x < 10 && y < 10) {
+		return true;
+	}
+	return false;
+}
+
+void toggle(bool arr[][11], int x, int y) {
+	arr[y][x] = !arr[y][x];
+	for(int i = 0; i < 4; i++) {
+		int adjacentX = x + dx[i];
+		int adjacentY = y + dy[i];
+		if(inRange(adjacentX, adjacentY)) {
+			arr[adjacentY][adjacentX] = !arr[adjacentY][adjacentX];
+		}
+	}
+}
+
 void firstLine(int x, int cnt, bool tmp_arr[][11]) { // 첫번째 줄에 있는 전구의 모든 경우의 수 (2^n)을 체크하는 재귀함수 (dfs)
     if(x == 10) { // 첫번째 줄 완성하면
-
+		bool firstLineFilledArr[11][11] = {0, };
+		copyArr(firstLineFilledArr, tmp_arr);
+		for(int i = 1; i < 10; i++) { // 두 번째 줄부터 마지막 줄까지 가면서 최대한 꺼줌
+			for(int j = 0; j < 10; j++) {
+				if(firstLineFilledArr[i-1][j]) { // 바로 윗 칸이 켜져있으면 이번 칸에서 반드시 꺼줘야함 (지금 아니면 끌 수 있는 경우 더이상 없으므로)
+					toggle(firstLineFilledArr, j, i);
+					cnt++;
+				}
+			}
+		}
+		for(int i = 0; i < 10; i++) {
+			if(firstLineFilledArr[9][i] == true) { // 마지막 줄에 아직 안꺼진 전구가 있음 -> 전구 모두 못끄는 경우
+				return;
+			}
+		}
+		if(cnt < ans) {
+			ans = cnt;
+		}
     }
-    else {
+    else { // 아직 완성하지 못했다면 이번 칸 누를지 말고 결정하고 다음 칸으로
+		// 이번 칸 누르는 경우
         bool toggled_arr[11][11] = {0, };
         copyArr(toggled_arr, tmp_arr);
+		toggle(toggled_arr, x, 0);
+		firstLine(x+1, cnt+1, toggled_arr);
 
+		// 이번 칸 누르지 않는 경우
         bool notToggled_arr[11][11] = {0, };
         copyArr(notToggled_arr, tmp_arr);
-
-        firstLine(x+1, cnt, )
+        firstLine(x+1, cnt, notToggled_arr);
     }
 }
 
 void solve() {
-    firstLine();
+    firstLine(0, 0, arr);
+	cout << ans << endl;
 }
 
 int main() {
@@ -58,100 +105,3 @@ int main() {
 
 
 
-#include <bits/stdc++.h>
-using namespace std;
-#define MAX 10
-#define INF 1e9
-
-bool arr[15][15];
-int dx[] = { 0,0,1,-1 };
-int dy[] = { 1,-1,0,0 };
-int ans = INF;
-
-bool outrange(int x, int y) {
-	if (x < 0 || x >= MAX || y < 0 || y >= MAX) return 1;
-	return 0;
-}
-
-void toggle(int x, int y, bool tmp_arr[][15]) {
-	for (int i = 0; i < 4; i++)
-	{
-		int nx = x + dx[i];
-		int ny = y + dy[i];
-		if (!outrange(nx, ny)) tmp_arr[nx][ny] = !tmp_arr[nx][ny];
-	}
-	tmp_arr[x][y] = !tmp_arr[x][y];
-}
-
-
-bool islight(bool tmp_arr[][15]) {
-	for (int i = 0; i < MAX; i++)
-		for (int j = 0; j < MAX; j++)
-			if (tmp_arr[i][j]) return 1;
-	return 0;
-}
-
-void init(bool t_arr1[][15], bool t_arr2[][15], bool t_arr[][15]) {
-	for (int i = 0; i < MAX; i++)
-		for (int j = 0; j < MAX; j++) {
-			t_arr2[i][j] = t_arr[i][j];
-			t_arr1[i][j] = t_arr[i][j];
-		}
-}
-
-void firstLine(int x, int sum, bool t_arr[][15]) {
-	if (x == MAX) {
-		//copy
-		bool t_arr3[15][15] = { 0, };
-		for (int i = 0; i < MAX; i++)
-			for (int j = 0; j < MAX; j++)
-				t_arr3[i][j] = t_arr[i][j];
-
-
-		//두 번째 ~ 마지막 줄에 대해서 toggle 진행
-		for (int i = 1; i < MAX; i++) {
-			for (int j = 0; j < MAX; j++) {
-				if (t_arr3[i - 1][j]) {
-					toggle(i, j, t_arr3);
-					sum++;
-				}
-			}
-		}
-		
-		//모든 불이 다 꺼져 있으면!
-		if (!islight(t_arr3))  ans = min(ans, sum);
-		return;
-	}
-
-	bool t_arr1[15][15] = { 0, };
-	bool t_arr2[15][15] = { 0, };
-
-	//c++ 특성상, 배열의 주소를 넘겨주므로 새로운 함수를 만날 때 마다
-	//원 배열의 값이 달라진다. 따라서 계속 copy를 해줘야 됨
-	init(t_arr1, t_arr2, t_arr);
-
-	//해당 칸을 안누르고 넘어가는 경우
-	firstLine(x + 1, sum, t_arr1);
-
-	//해당 칸을 누르고 넘어가는 경우
-	toggle(0, x, t_arr2);
-	firstLine(x + 1, sum + 1, t_arr2);
-}
-
-int main() {
-	ios::sync_with_stdio(false);
-	cin.tie(NULL); cout.tie(NULL);
-
-	for (int i = 0; i < MAX; i++) {
-		for (int j = 0; j < MAX; j++)
-		{
-			char c; cin >> c;
-			if (c == 'O') arr[i][j] = 1;
-		}
-	}
-
-	firstLine(0, 0, arr);
-
-	if (ans == INF) cout << -1;
-	else cout << ans;
-}
