@@ -8,6 +8,7 @@ using namespace std;
 
 int n;
 long long solution[MAX];
+int ans[3];
 
 void init() {
     cin.tie(0); cout.tie(0);
@@ -19,31 +20,31 @@ void init() {
     sort(solution, solution + n);
 }
 
-void solve() {
-    int first, second, third;
-    int start = 0;
-    int end = n-1;
+void solve() { // 세 포인터 X, 하나 고정하고 두 포인터 이용
     long long chrVal = 3000000001;
-    while(start != end) {
-        long long twoSum = solution[start] + solution[end];
-        long long threeSum;
-        for(int i = start + 1; i < end; i++) {
-            threeSum = twoSum + solution[i];
+    for(int fix = 0; fix < n-2; fix++) { // fix는 가장 왼쪽에서부터 한 칸씩 오른쪽으로 이동하며, 칸마다 두 포인터 이용
+        int left = fix + 1;
+        int right = n - 1;
+        while(left < right) {
+            long long threeSum = solution[fix] + solution[left] + solution[right]; 
             if(abs(threeSum) < chrVal) {
                 chrVal = abs(threeSum);
-                first = solution[start];
-                second = solution[i];
-                third = solution[end];
+                ans[0] = solution[fix];
+                ans[1] = solution[left];
+                ans[2] = solution[right];
+            }
+            if(threeSum >= 0) {
+                right--;
+            }
+            else if(threeSum < 0) {
+                left++;
             }
         }
-        if(threeSum >= 0) {
-            end--;
-        }
-        else if(threeSum < 0) {
-            start++;
-        }
     }
-    cout << first << " " << second << " " << third << endl;
+    for(int i = 0; i < 3; i++) {
+        cout << ans[i] << " ";
+    }
+    cout << endl;
 }
 
 int main() {
