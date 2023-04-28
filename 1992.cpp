@@ -16,71 +16,38 @@ void init() {
     }
 }
 
-void check(int x, int y, int dist) {
-    for(int i = y; i < i + dist; i++) {
-        for(int j = x; j < j + dist; j++) {
-            
+bool check(int x, int y, int sz) {
+    int rep = video[y][x];
+    for(int i = y; i < y + sz; i++) {
+        for(int j = x; j < x + sz; j++) {
+            if(rep != video[i][j]) {
+                return false;
+            }
         }
     }
+    return true;
 }
 
 void quadTree(int x, int y, int sz) {
-    int rep = video[y][x];
-    int dist = sz / 2;
-    check(x, y, dist);
-    
+    if(check(x, y, sz)) {
+        cout << video[y][x];
+    }
+    else {
+        cout << "(";
+        int dist = sz / 2;
+        quadTree(x, y, dist);
+        quadTree(x + dist, y, dist);
+        quadTree(x, y + dist, dist);
+        quadTree(x + dist, y + dist, dist);
+        cout << ")";
+    }
 }
 
 void solve() {
-    quadTree(0, 0, n);
+    quadTree(1, 1, n);
 }
 
 int main() {
     init();
     solve();
 }
-
-
-// #include <iostream>
-// #include <string>
-
-// using namespace std;
-
-// string video[64];
-
-// // 재귀함수
-// void printCompResult(int size, int y, int x)
-// {
-//     char curr = video[y][x];
-
-//     for (int i = y; i < y + size; i++)
-//         for (int j = x; j < x + size; j++)
-//             if (video[i][j] != curr)
-//             {
-//                 cout << '(';
-//                 printCompResult(size / 2, y, x);
-//                 printCompResult(size / 2, y, x + size / 2);
-//                 printCompResult(size / 2, y + size / 2, x);
-//                 printCompResult(size / 2, y + size / 2, x + size / 2);
-//                 cout << ')';
-//                 return;
-//             }
-
-//     cout << curr;
-// }
-
-// int main()
-// {
-//     ios_base::sync_with_stdio(false);
-//     cin.tie(NULL);
-//     cout.tie(NULL);
-
-//     int N;
-//     cin >> N;
-//     for (int i = 0; i < N; i++)
-//         cin >> video[i];
-
-//     printCompResult(N, 0, 0);
-
-//     return 0;
-// }
