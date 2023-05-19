@@ -1,11 +1,12 @@
 #include <iostream>
 #include <string>
+#include <deque>
+#include <cmath>
 #define endl '\n'
 #define MAX 101
 
 using namespace std;
-
-int gear[5][9];
+deque<int> gear[5]; // 앞뒤로 자주 변경될 수열일 경우에는 deque 사용 고려하자!
 int rotation;
 int rotatedIdx[MAX];
 int rotatedDir[MAX];
@@ -18,7 +19,7 @@ void input() {
         string arr;
         cin >> arr;
         for(int j = 0; j < arr.length(); j++) {
-            gear[i][j] = arr[j] - '0';
+            gear[i].push_back(arr[j] - '0');
         }
     }
     cin >> rotation;
@@ -27,49 +28,72 @@ void input() {
     }
 }   
 
-void rotateRightGear() {
-
+void rotateSelf(int idx, int dir) {
+    if(dir == 1) {
+        int tmp = gear[idx].back();
+        gear[idx].pop_back();
+        gear[idx].push_front(tmp);
+    }
+    else if(dir == -1) {
+        int tmp = gear[idx].front();
+        gear[idx].pop_front();
+        gear[idx].push_back(tmp);
+    }
 }
 
-void rotateLeftGear() {
+void rotateRightGear(int idx, int dir) {
+    if(idx != 4) {
+        if(gear[idx][2] != gear[idx+1][6]) {
+            rotateRightGear(idx + 1, dir * (-1));
+        }
+    }
+    rotateSelf(idx, dir);
+}
 
+void rotateLeftGear(int idx, int dir) {
+    if(idx != 1) {
+        if(gear[idx][6] != gear[idx-1][2]) {
+            rotateLeftGear(idx - 1, dir * (-1));
+        }
+    }
+    rotateSelf(idx, dir);
 }
 
 void rotateGear(int idx, int dir) {
     if(idx == 1) {
         if(gear[idx][2] != gear[idx+1][6]) {
-            rotateRightGear();
+            rotateRightGear(idx + 1, dir * (-1));
         }
     }
     else if(idx == 4) {
         if(gear[idx][6] != gear[idx-1][2]) {
-            rotateLeftGear();
+            rotateLeftGear(idx - 1, dir * (-1));
         }
     }
     else {
         if(gear[idx][2] != gear[idx+1][6]) {
-            rotateRightGear();
+            rotateRightGear(idx + 1, dir * (-1));
         }
         if(gear[idx][6] != gear[idx-1][2]) {
-            rotateLeftGear();
+            rotateLeftGear(idx - 1, dir * (-1));
         }
     }
-    if(dir == 1) {
-        int tmp[8];
-        tmp = {gear[idx][7], gear[idx][0], gear[idx][1], gear[idx][2], 
-                    gear[idx][3], gear[idx][4], gear[idx][5], gear[idx][6]};
-    }
-    else if(dir == -1) {
+    rotateSelf(idx, dir);
+}
 
+void printScore() {
+    int score = 0; 
+    for(int i = 1; i <= 4; i++) {
+        score += gear[i][0] * pow(2,i-1);
     }
-    
+    cout << score << endl;
 }
 
 void solve() {
     for(int i = 0; i < rotation; i++) {
         rotateGear(rotatedIdx[i], rotatedDir[i]);
     }
-    // 점수 계산
+    printScore();
 }
 
 int main() {
